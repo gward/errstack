@@ -1,7 +1,8 @@
-# errstack: Go errors with stack traces
+# errstack: Go errors with chained stack traces
 
 errstack is a Go package for creating errors with stack traces.
-It is heavily inspired by github.com/pkg/errors.
+It is heavily inspired by github.com/pkg/errors,
+as well as chained exceptions as seen in Java and Python 3.
 
 There are two basic operations with errstack:
 creating a new error, and wrapping an existing one to add a stack trace.
