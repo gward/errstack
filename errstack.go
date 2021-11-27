@@ -39,6 +39,21 @@ func (err ErrorStack) StackTrace() StackTrace {
 	return err.stack
 }
 
+func (err ErrorStack) Format(state fmt.State, verb rune) {
+	switch verb {
+	case 'v':
+		if state.Flag('+') {
+			err.WriteStack(state)
+			return
+		}
+		fallthrough
+	case 's':
+		io.WriteString(state, err.msg)
+	case 'q':
+		fmt.Fprintf(state, "%q", err.msg)
+	}
+}
+
 // WriteStack writes the chain of stack traces in err to writer.
 func (err ErrorStack) WriteStack(writer io.Writer) {
 	stopFunction := "runtime.main"

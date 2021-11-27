@@ -5,30 +5,20 @@ package main
 import (
 	"fmt"
 	"os"
-	"runtime"
 
 	"github.com/gward/errstack"
 )
 
 func main() {
+	errstack.Wrap = errstack.WrapChain
+
 	err := layer1()
-	fmt.Fprintf(os.Stderr, "%+v\n", err)
+	fmt.Fprintf(os.Stderr, "Fprintf(%%v):\n%v\n", err)
+	fmt.Fprintf(os.Stderr, "Fprintf(%%s):\n%s\n", err)
+	fmt.Fprintf(os.Stderr, "Fprintf(%%q):\n%q\n", err)
+	fmt.Fprintf(os.Stderr, "Fprintf(%%+v):\n%+v\n", err)
 
 	esErr := err.(errstack.ErrorStack)
-	fmt.Printf("raw stack trace:\n")
-	for _, pc := range(esErr.StackTrace()) {
-		fmt.Printf("  %x\n", pc)
-	}
-
-	fmt.Printf("CallersFrames():\n")
-	frames := runtime.CallersFrames([]uintptr(esErr.StackTrace()))
-	for {
-		frame, more := frames.Next()
-		fmt.Printf("  %s, %s:%d\n", frame.Function, frame.File, frame.Line)
-		if !more {
-			break
-		}
-	}
 
 	fmt.Printf("WriteStack():\n")
 	esErr.WriteStack(os.Stdout)
