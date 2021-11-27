@@ -19,6 +19,11 @@ func main() {
 	fmt.Fprintf(os.Stderr, "Fprintf(%%+v):\n%+v\n", err)
 
 	esErr := err.(errstack.ErrorStack)
+	cause := esErr.Cause()
+	fmt.Fprintf(os.Stderr, "immediate cause: %T %v\n", cause, cause)
+
+	cause = errstack.Cause(err)
+	fmt.Fprintf(os.Stderr, "root cause: %T %v\n", cause, cause)
 
 	fmt.Printf("WriteStack():\n")
 	esErr.WriteStack(os.Stdout)

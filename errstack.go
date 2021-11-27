@@ -35,6 +35,12 @@ func (err ErrorStack) Error() string {
 	return err.msg
 }
 
+// Cause returns the immediate predecessor in the chain of causation
+// to this error, or nil if there is no known cause.
+func (err ErrorStack) Cause() error {
+	return err.cause
+}
+
 func (err ErrorStack) StackTrace() StackTrace {
 	return err.stack
 }
@@ -118,3 +124,29 @@ func wrap(cause error, msg string) ErrorStack {
 // with a different function (e.g. WrapOptional or WrapTruncate)
 // during startup.
 var Wrap = WrapChain
+
+type Causer interface {
+	Cause() error
+}
+
+// Cause returns the underlying cause of the error, if possible.
+// An error value has a cause if it implements Causer.
+//
+// If the error does not implement Cause, the original error will
+// be returned. If the error is nil, nil will be returned without further
+// investigation.
+func Cause(err error) error {
+	var previous error
+	for err != nil {
+		cause, ok := err.(Causer)
+		if !ok {
+			break
+		}
+		previous = err
+		err = cause.Cause()
+	}
+	if err != nil {
+		return err
+	}
+	return previous
+}
