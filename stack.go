@@ -16,7 +16,7 @@ func Callers(skip int) StackTrace {
 func (stack StackTrace) FormatStack(msg string, stopFunction *string) []string {
 	lines := make([]string, 0, 1+2*len(stack))
 	if msg != "" {
-		lines = append(lines, msg + ":")
+		lines = append(lines, msg)
 	}
 	frames := runtime.CallersFrames(stack)
 	for {

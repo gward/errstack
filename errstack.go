@@ -32,7 +32,11 @@ func Errorf(format string, args ...interface{}) ErrorStack {
 }
 
 func (err ErrorStack) Error() string {
-	return err.msg
+	msg := err.msg
+	if err.cause != nil {
+		msg = msg + ": " + err.cause.Error()
+	}
+	return msg
 }
 
 // Cause returns the immediate predecessor in the chain of causation
@@ -52,11 +56,10 @@ func (err ErrorStack) Format(state fmt.State, verb rune) {
 			err.WriteStack(state)
 			return
 		}
-		fallthrough
 	case 's':
-		io.WriteString(state, err.msg)
+		io.WriteString(state, err.Error())
 	case 'q':
-		fmt.Fprintf(state, "%q", err.msg)
+		fmt.Fprintf(state, "%q", err.Error())
 	}
 }
 
@@ -72,7 +75,7 @@ func (err ErrorStack) WriteStack(writer io.Writer) {
 // lines of text.
 func (err ErrorStack) FormatStack(stopFunction *string) []string {
 	firstFunction := runtime.FuncForPC(err.stack[0]).Name()
-	lines := err.stack.FormatStack(err.msg, stopFunction)
+	lines := err.stack.FormatStack(err.Error(), stopFunction)
 
 	// chain stack traces to the next underlying error
 	if esCause, ok := err.cause.(ErrorStack); ok {
