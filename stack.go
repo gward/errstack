@@ -9,12 +9,12 @@ type StackTrace []uintptr
 
 func Callers(skip int) StackTrace {
 	stack := make([]uintptr, 32)
-	depth := runtime.Callers(skip + 1, stack)
+	depth := runtime.Callers(skip+1, stack)
 	return StackTrace(stack[0:depth])
 }
 
 func (stack StackTrace) FormatStack(msg string, stopFunction *string) []string {
-	lines := make([]string, 0, 1 + 2*len(stack))
+	lines := make([]string, 0, 1+2*len(stack))
 	if msg != "" {
 		lines = append(lines, msg + ":")
 	}

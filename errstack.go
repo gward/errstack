@@ -8,7 +8,7 @@ import (
 
 // ErrorStack is an error object with a stack trace and layers of context.
 type ErrorStack struct {
-	msg string
+	msg   string
 	cause error
 	stack StackTrace
 }
@@ -17,7 +17,7 @@ type ErrorStack struct {
 // pointing to the caller of New().
 func New(msg string) ErrorStack {
 	return ErrorStack{
-		msg: msg,
+		msg:   msg,
 		stack: Callers(2),
 	}
 }
@@ -26,7 +26,7 @@ func New(msg string) ErrorStack {
 func Errorf(format string, args ...interface{}) ErrorStack {
 	msg := fmt.Sprintf(format, args...)
 	return ErrorStack{
-		msg: msg,
+		msg:   msg,
 		stack: Callers(2),
 	}
 }
@@ -113,7 +113,7 @@ func WrapTruncate(cause error, msg string) ErrorStack {
 
 func wrap(cause error, msg string) ErrorStack {
 	return ErrorStack{
-		msg: msg,
+		msg:   msg,
 		cause: cause,
 		stack: Callers(3),
 	}
